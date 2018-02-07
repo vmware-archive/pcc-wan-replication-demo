@@ -1,0 +1,88 @@
+#navbar {
+    background-color: #00b3b3;
+}
+
+#title {
+	display: inline-block;
+    color: #F0F8FF;
+	margin: 12px;
+	font-size: 2.5rem;
+	font-style: normal;
+	font-weight: bold;
+}
+
+.stats_box {
+	display: inline-block;
+	margin: 10px;
+	border: 2px solid #e6e6e6;
+	border-radius: 8px;
+	width: 12%;
+	height: 30%;
+	padding: 10px;
+	text-align: center;
+	font-size: 1.5rem;
+	font-style: normal;
+	font-weight: bold;
+	font-family: system-ui;
+	color: #999999;
+}
+
+
+.stats_num {
+	font-size: 3rem;
+	font-style: normal;
+	font-weight: bold;
+	margin: 8px;
+	color: black;
+}
+
+#load_param {
+	display: inline-block;
+	position: absolute;
+	left: 20%;
+	top: 120px;
+}
+
+#region_dropdown {
+	display: inline-block;
+}
+
+#index {
+	display: inline-block;
+}
+
+#rate_dropdown {
+	display: inline-block;
+}
+
+#load{
+	display: inline-block;
+}
+
+#loading_status {
+	display: inline-block;
+	margin: 8px;
+	font-size: 1.5rem;
+	font-style: normal;
+	font-weight: bold;
+}
+
+#list_customers {
+	display: inline-block;
+	margin: 10px;
+	width: 63%;
+	height: 170px;
+	font-size: 1.1rem;
+	font-style: normal;
+	overflow: scroll;
+}
+
+#subscribe_log {
+	margin: 10px;
+	border-top: 2px solid #e6e6e6;
+	width: 100%;
+	height: 500px;
+	font-size: 1.1rem;
+	font-style: normal;
+	overflow: scroll;
+}

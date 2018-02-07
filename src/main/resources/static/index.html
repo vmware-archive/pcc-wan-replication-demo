@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <title>Pivotal CloudCache WAN Replication Demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/demo.css">
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/superagent/3.5.2/superagent.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/sockjs/1/sockjs.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+
+<body>
+	<div id="demo">
+		<div id="navbar">
+			<div id="title">PCC WAN Replication Demo</div>
+		</div>
+
+		<div id="cache_stats" class="stats_box">Cache
+			<div id="cache_num" class="stats_num">0</div>
+			<button id="clearcache" class="btn btn-danger" onclick="clearcache()">Clear</button>
+		</div>
+
+		<div id="load_param">
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Region: 
+			<select id="region_dropdown">
+				<option value="us-west">us-west</option>
+				<option value="us-central">us-central</option>
+				<option value="us-east">us-east</option>
+			</select>
+			
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Starting Index:
+			<div id="index">
+				<input id="starting_index" type='text' size="5" value="0"/>
+			</div>
+			
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rate:
+			<select id="rate_dropdown">
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+			</select>
+			
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<div id="load">
+				<button id="load_button" class="btn btn-success" onclick="startLoad">start</button>
+			</div>
+			<div id="loading_status"></div>
+		</div>
+	</div>
+	
+	<div>
+		<div id="subscribe_log"><b>PCC Client Subscription Log:<br><br></b></div>
+	</div>
+	
+	
+	<script>
+		function update_stats() {
+			//update cache number
+			superagent.get('/countcache')
+			.then(function(res) {
+				$("#cache_num").html(res.text);
+		  	})
+		  	.catch(function (error) {
+		    	console.log(error);
+			});
+			
+			//update loading status
+			superagent.get('/loadstatus')
+			.then(function(res) {
+				if (res.text == "running") {
+					$("#load_button").removeClass("btn btn-success").addClass("btn btn-danger");
+					$("#load_button").html("stop");
+					$("#load_button").attr("onclick", "stopLoad()");
+				} else {
+					$("#load_button").removeClass("btn btn-danger").addClass("btn btn-success");
+					$("#load_button").html("start");
+					$("#load_button").attr("onclick", "startLoad()");
+				}
+		  	})
+		  	.catch(function (error) {
+		    	console.log(error);
+			});
+			
+			//update log result
+// 		  	superagent.get('/listall')
+// 			.then(function(res) {
+// 				if (res.text != "") {
+// 					$("#subscribe_log").html(res.text);
+// 				}
+// 		  	})
+// 		  	.catch(function (error) {
+// 		    	console.log(error);
+// 			});	
+			
+			function logout() {
+				if (this.responseText != "") {
+ 					$("#subscribe_log").html(this.responseText);
+ 				}
+			}
+			
+			var oReq = new XMLHttpRequest();
+			oReq.addEventListener("load", logout);
+			oReq.open("GET", "/listall");
+			oReq.send();
+		}
+		
+		function clearcache() {
+			superagent.get('/clearcache')
+			.then(function(res) {
+				update_stats();
+		  	})
+		  	.catch(function (error) {
+		    	console.log(error);
+			});	
+		}
+		
+		function startLoad() {			
+			if (!isNaN($("#starting_index").val()) ) {
+				var region = $("#region_dropdown :selected").text();
+				var starting_index = $("#starting_index").val();
+				var rate = $("#rate_dropdown :selected").text();
+				
+				$("#loading_status").show().html("Loading...");
+				
+				var xmlHttp = new XMLHttpRequest();
+	 			xmlHttp.open( "GET", "/startload?region="+region+"&starting_index="+starting_index+"&amount="+rate, false );
+	 			xmlHttp.send( null );
+				
+	 			update_stats();	
+			} else {;
+				$("#loading_status").html("Invalid number... Please retry.").fadeOut(3000);
+			}
+		}
+		
+		function stopLoad() {
+			superagent.get('/stopload')
+			.then(function(res) {
+				update_stats();
+				$("#loading_status").html("Stopped.").fadeOut(3000);
+		  	})
+		  	.catch(function (error) {
+		    	console.log(error);
+			});	
+		}
+		
+		update_stats();
+		setInterval(function(){update_stats();}, 2000);
+		
+	</script>
+</body>
+
+</html>
