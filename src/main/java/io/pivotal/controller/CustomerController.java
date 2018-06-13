@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
+import javax.annotation.Resource;
+
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.Region;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,23 +32,17 @@ public class CustomerController {
 	@Autowired
 	CustomerRepository pccCustomerRepository;
 	
-	@Autowired
-	ClientRegionFactoryBean<String, Customer> customerRegionFactory;
-	
-	@Autowired 
-	GemFireCache clientCache;
+	@Resource(name = "customer")
+	Region<String, Customer> customerRegion;
 	
 	boolean CONTINUE_LOAD = false;
 	int STARTING_INDEX = 0;
 	
 	Fairy fairy = Fairy.create();
 	
-	
-	
 	@RequestMapping(method = RequestMethod.GET, path = "/clearcache")
 	@ResponseBody
 	public String clearCache() throws Exception {
-		Region<String, Customer> customerRegion = customerRegionFactory.getObject();
 		customerRegion.removeAll(customerRegion.keySetOnServer());
 		return "Region cleared";
 	}
@@ -140,7 +136,7 @@ public class CustomerController {
 					customers.add(customer);
 				}
 				
-				pccCustomerRepository.save(customers);
+				pccCustomerRepository.saveAll(customers);
 				
 	            try {
 	                Thread.sleep(5000);

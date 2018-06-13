@@ -3,7 +3,7 @@ applications:
 - name: wan-demo
   random-route: true
   mem: 2G
-  path: target/cache-demo-0.0.1-SNAPSHOT.jar
+  path: target/wan-demo-0.0.1-SNAPSHOT.jar
   buildpack: java_buildpack_offline
   services:
-  - test-pcc-wan
+  - dev-cluster

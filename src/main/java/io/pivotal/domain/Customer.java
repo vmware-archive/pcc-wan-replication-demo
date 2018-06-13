@@ -3,7 +3,7 @@ package io.pivotal.domain;
 import java.util.Date;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.gemfire.mapping.Region;
+import org.springframework.data.gemfire.mapping.annotation.Region;
 
 @Region("customer")
 public class Customer {
